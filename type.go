@@ -45,7 +45,7 @@ type ReqRegisterAutoPay struct {
 type ResRegisterAutoPay struct {
 	OnlineUrl string // PC 환경 결제 창 호출 URL
 	MobileUrl string // 모바일 환경 결제 창 호출 URL
-	Token     string // 결제 인증 토큰
+	//Token     string // 결제 인증 토큰
 }
 
 type ReqTransactionAutoPay struct {

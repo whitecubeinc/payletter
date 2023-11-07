@@ -55,7 +55,6 @@ func (o *PayLetter) RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegisterAuto
 	res = ResRegisterAutoPay{
 		MobileUrl: payLetterRes["mobile_url"].(string),
 		OnlineUrl: payLetterRes["online_url"].(string),
-		Token:     payLetterRes["token"].(string),
 	}
 
 	return
