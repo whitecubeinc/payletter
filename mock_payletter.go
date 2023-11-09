@@ -99,7 +99,7 @@ func (o *MockPayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCanc
 	return
 }
 
-func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res *ResRegisterEasyPay, err error) {
+func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error) {
 	payletterRes := utils.Post[ResRegisterEasyPay](
 		easyPayRegisterTestUrl,
 		req,
@@ -115,11 +115,11 @@ func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res *ResRegiste
 		return
 	}
 
-	res = &payletterRes
+	res = payletterRes
 	return
 }
 
-func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res *ResPayletterGetEasyPayMethods, err error) {
+func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayletterGetEasyPayMethods, err error) {
 	params := map[string]string{
 		"client_id": req.ClientID,
 		"user_id":   strconv.Itoa(req.UserID),
@@ -157,7 +157,7 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 		}
 		payletterRes.MethodList[idx] = method
 	}
-	res = &payletterRes
+	res = payletterRes
 
 	return
 }

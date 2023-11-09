@@ -16,9 +16,9 @@ type IPayLetter interface {
 	// CancelTransaction 결제 취소
 	CancelTransaction(req ReqCancelTransaction) (res ResCancelTransaction, err error)
 	// RegisterEasyPay 간편결제 결제 수단 등록
-	RegisterEasyPay(req ReqRegisterEasyPay) (res *ResRegisterEasyPay, err error)
+	RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error)
 	// GetRegisteredEasyPayMethods 간편결제 등록한 결제 수단 목록 조회
-	GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res *ResPayletterGetEasyPayMethods, err error)
+	GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayletterGetEasyPayMethods, err error)
 }
 
 type ClientInfo struct {
