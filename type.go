@@ -18,7 +18,7 @@ type IPayLetter interface {
 	// RegisterEasyPay 간편결제 결제 수단 등록
 	RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error)
 	// GetRegisteredEasyPayMethods 간편결제 등록한 결제 수단 목록 조회
-	GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayletterGetEasyPayMethods, err error)
+	GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayLetterGetEasyPayMethods, err error)
 }
 
 type ClientInfo struct {
@@ -169,25 +169,25 @@ type ReqGetRegisteredEasyPayMethod struct {
 	HashData string `json:"hash_data"`
 }
 
-type ResPayletterGetEasyPayMethods struct {
-	TotalCount       int                    `json:"total_count"`
-	JoinDate         string                 `json:"join_date"`
-	MethodCount      []PayletterMethodCount `json:"method_count"`
-	MethodList       []PayletterMethod      `json:"method_list"`
-	PasswordSkipFlag string                 `json:"password_skip_flag"`
-	Code             *string                `json:",omitempty"`
-	Message          string                 `json:",omitempty"`
+type ResPayLetterGetEasyPayMethods struct {
+	TotalCount       int                  `json:"total_count"`
+	JoinDate         string               `json:"join_date"`
+	MethodCount      []EasyPayMethodCount `json:"method_count"`
+	MethodList       []EasyPayMethod      `json:"method_list"`
+	PasswordSkipFlag string               `json:"password_skip_flag"`
+	Code             *string              `json:"code,omitempty"`
+	Message          string               `json:"message,omitempty"`
 }
 
-type PayletterMethodCount struct {
-	PaymentMethod string
-	Count         int
+type EasyPayMethodCount struct {
+	PaymentMethod string `json:"paymentMethod"`
+	Count         int    `json:"count"`
 }
 
-type PayletterMethod struct {
+type EasyPayMethod struct {
 	// payletter response
 	PaymentMethod         string `json:"payment_method"`
-	Billkey               string `json:"billkey"`
+	BillKey               string `json:"billkey"`
 	AliasName             string `json:"alias_name"`
 	FavoriteFlag          string `json:"favorite_flag"`
 	MethodRegDate         string `json:"method_reg_date"`
@@ -203,6 +203,6 @@ type PayletterMethod struct {
 	ProductName           string `json:"product_name"`
 	LastTranDate          string `json:"last_tran_date"`
 
-	// method code에 따른 method name
-	MethodName string
+	// method code 에 따른 method name
+	MethodName string `json:"-"`
 }

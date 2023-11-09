@@ -119,7 +119,7 @@ func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegister
 	return
 }
 
-func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayletterGetEasyPayMethods, err error) {
+func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayLetterGetEasyPayMethods, err error) {
 	params := map[string]string{
 		"client_id": req.ClientID,
 		"user_id":   strconv.Itoa(req.UserID),
@@ -127,7 +127,7 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 		"hash_data": req.HashData,
 	}
 
-	payletterRes := utils.Get[ResPayletterGetEasyPayMethods](
+	payletterRes := utils.Get[ResPayLetterGetEasyPayMethods](
 		easyPayGetRegisteredMethodTestUrl,
 		params,
 		http.Header{
@@ -141,11 +141,11 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 	}
 
 	if payletterRes.MethodList == nil {
-		payletterRes.MethodList = make([]PayletterMethod, 0)
+		payletterRes.MethodList = make([]EasyPayMethod, 0)
 	}
 
 	if payletterRes.MethodCount == nil {
-		payletterRes.MethodCount = make([]PayletterMethodCount, 0)
+		payletterRes.MethodCount = make([]EasyPayMethodCount, 0)
 	}
 
 	for idx, method := range payletterRes.MethodList {
