@@ -152,6 +152,13 @@ type ReqRegisterEasyPay struct {
 	HashData      string `json:"hash_data"`
 }
 
+func (o *ReqRegisterEasyPay) SetHashData(apiKey string, clientId string) {
+	originHashString := fmt.Sprintf("%s%d%s%s", clientId, o.UserID, o.ReqDate, apiKey)
+	h := sha256.Sum256([]byte(originHashString))
+
+	o.HashData = hex.EncodeToString(h[:])
+}
+
 type ResRegisterEasyPay struct {
 	Token       *string `json:"token"`
 	RedirectUrl *string `json:"redirect_url"`
@@ -160,9 +167,17 @@ type ResRegisterEasyPay struct {
 }
 
 type ReqGetRegisteredEasyPayMethod struct {
-	UserID   int    `json:"user_id"`
-	ReqDate  string `json:"req_date"`
-	HashData string `json:"hash_data"`
+	UserID  int    `json:"user_id"`
+	ReqDate string `json:"req_date"`
+}
+
+func (o *ReqGetRegisteredEasyPayMethod) CreateHashData(apiKey string, clientId string) string {
+	originHashString := fmt.Sprintf("%s%d%s%s", clientId, o.UserID, o.ReqDate, apiKey)
+	h := sha256.Sum256([]byte(originHashString))
+
+	ownHash := hex.EncodeToString(h[:])
+
+	return ownHash
 }
 
 type ResPayLetterGetEasyPayMethods struct {
