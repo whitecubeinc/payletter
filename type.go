@@ -8,11 +8,6 @@ import (
 	"strings"
 )
 
-type pgCode struct {
-	CreditCard string
-	Easybank   string
-}
-
 type IPayLetter interface {
 	// RegisterAutoPay 자동 결제 수단 등록
 	RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegisterAutoPay, err error)

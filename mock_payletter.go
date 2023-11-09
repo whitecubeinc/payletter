@@ -151,7 +151,7 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 	for idx, method := range payletterRes.MethodList {
 		switch method.PaymentMethod {
 		case PgCode.CreditCard:
-			method.MethodName = PayletterCardCode[method.MethodCode]
+			method.MethodName = PayletterCardCode.ValueMap[method.MethodCode]
 		case PgCode.Easybank:
 			method.MethodName = PayletterBankCode[method.MethodCode]
 		}
