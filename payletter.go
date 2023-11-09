@@ -123,8 +123,8 @@ func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTr
 	return
 }
 
-func (o *PayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error) {
-	payletterRes := utils.Post[ResRegisterEasyPay](
+func (o *PayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (payLetterRes ResRegisterEasyPay, err error) {
+	payLetterRes = utils.Post[ResRegisterEasyPay](
 		easyPayRegisterUrl,
 		req,
 		http.Header{
@@ -133,17 +133,15 @@ func (o *PayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasy
 		},
 	)
 
-	if payletterRes.Code != nil {
+	if payLetterRes.Code != nil {
 		// 에러 발생
-		err = errors.New(fmt.Sprintf("[%d]%s", *payletterRes.Code, payletterRes.Message))
+		err = errors.New(fmt.Sprintf("[%d]%s", *payLetterRes.Code, payLetterRes.Message))
 		return
 	}
-
-	res = payletterRes
 	return
 }
 
-func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayLetterGetEasyPayMethods, err error) {
+func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (payLetterRes ResPayLetterGetEasyPayMethods, err error) {
 	params := map[string]string{
 		"client_id": req.ClientID,
 		"user_id":   strconv.Itoa(req.UserID),
@@ -151,7 +149,7 @@ func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMetho
 		"hash_data": req.HashData,
 	}
 
-	payletterRes := utils.Get[ResPayLetterGetEasyPayMethods](
+	payLetterRes = utils.Get[ResPayLetterGetEasyPayMethods](
 		easyPayGetRegisteredMethodUrl,
 		params,
 		http.Header{
@@ -159,29 +157,28 @@ func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMetho
 			"Content-Type":  []string{"application/json"},
 		},
 	)
-	if payletterRes.Code != nil {
-		err = errors.New(fmt.Sprintf("[%s]%s", *payletterRes.Code, payletterRes.Message))
+	if payLetterRes.Code != nil {
+		err = errors.New(fmt.Sprintf("[%s]%s", *payLetterRes.Code, payLetterRes.Message))
 		return
 	}
 
-	if payletterRes.MethodList == nil {
-		payletterRes.MethodList = make([]EasyPayMethod, 0)
+	if payLetterRes.MethodList == nil {
+		payLetterRes.MethodList = make([]EasyPayMethod, 0)
 	}
 
-	if payletterRes.MethodCount == nil {
-		payletterRes.MethodCount = make([]EasyPayMethodCount, 0)
+	if payLetterRes.MethodCount == nil {
+		payLetterRes.MethodCount = make([]EasyPayMethodCount, 0)
 	}
 
-	for idx, method := range payletterRes.MethodList {
+	for idx, method := range payLetterRes.MethodList {
 		switch method.PaymentMethod {
 		case PgCode.CreditCard:
 			method.MethodName = PayletterCardCode.ValueMap[method.MethodCode]
 		case PgCode.Easybank:
 			method.MethodName = PayletterBankCode[method.MethodCode]
 		}
-		payletterRes.MethodList[idx] = method
+		payLetterRes.MethodList[idx] = method
 	}
-	res = payletterRes
 
 	return
 }
