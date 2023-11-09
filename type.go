@@ -19,6 +19,8 @@ type IPayLetter interface {
 	RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error)
 	// GetRegisteredEasyPayMethods 간편결제 등록한 결제 수단 목록 조회
 	GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayLetterGetEasyPayMethods, err error)
+	// CancelEasyPay 간편결제 취소
+	CancelEasyPay(req ReqCancelEasyPay) (res ResCancelEasyPay, err error)
 }
 
 type ClientInfo struct {
@@ -186,7 +188,7 @@ type ResPayLetterGetEasyPayMethods struct {
 	MethodCount      []EasyPayMethodCount `json:"method_count"`
 	MethodList       []EasyPayMethod      `json:"method_list"`
 	PasswordSkipFlag string               `json:"password_skip_flag"`
-	Code             *string              `json:"code,omitempty"`
+	Code             *int                 `json:"code,omitempty"`
 	Message          string               `json:"message,omitempty"`
 }
 
@@ -216,4 +218,33 @@ type EasyPayMethod struct {
 
 	// method code 에 따른 method name
 	MethodName string `json:"-"`
+}
+
+type ReqCancelEasyPay struct {
+	UserID   int    `json:"user_id"`
+	Tid      string `json:"tid"`
+	Amount   int    `json:"amount"`
+	ReqDate  string `json:"req_date"`
+	HashData string `json:"hash_data"`
+	IpAddr   string `json:"ip_addr"`
+}
+
+func (o *ReqCancelEasyPay) SetIPAddress(ipAddr string) {
+	o.IpAddr = ipAddr
+}
+
+func (o *ReqCancelEasyPay) SetHashData(clientId, apiKey string) {
+	originHashString := fmt.Sprintf("%s%s%d%s%s", clientId, o.Tid, o.Amount, o.ReqDate, apiKey)
+	h := sha256.Sum256([]byte(originHashString))
+
+	o.HashData = hex.EncodeToString(h[:])
+}
+
+type ResCancelEasyPay struct {
+	Tid        string `json:"tid"`
+	Cid        string `json:"cid"`
+	Amount     int    `json:"amount"`
+	CancelDate string `json:"cancel_date"`
+	Code       *int   `json:"code"`
+	Message    string `json:"message"`
 }

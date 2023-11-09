@@ -140,7 +140,7 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 		},
 	)
 	if payletterRes.Code != nil {
-		err = errors.New(fmt.Sprintf("[%s]%s", *payletterRes.Code, payletterRes.Message))
+		err = errors.New(fmt.Sprintf("[%d]%s", *payletterRes.Code, payletterRes.Message))
 		return
 	}
 
@@ -162,6 +162,26 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 		payletterRes.MethodList[idx] = method
 	}
 	res = payletterRes
+
+	return
+}
+
+func (o *MockPayLetter) CancelEasyPay(req ReqCancelEasyPay) (payLetterRes ResCancelEasyPay, err error) {
+	req.SetIPAddress(o.IpAddr)
+	req.SetHashData(o.ClientID, o.PaymentAPIKey)
+
+	payLetterRes = utils.Post[ResCancelEasyPay](
+		easyPayCancelTestUrl,
+		req,
+		http.Header{
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
+			"Content-Type":  []string{"application/json"},
+		},
+	)
+	if payLetterRes.Code != nil {
+		err = errors.New(fmt.Sprintf("[%d]%s", *payLetterRes.Code, payLetterRes.Message))
+		return
+	}
 
 	return
 }

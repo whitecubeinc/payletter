@@ -163,7 +163,7 @@ func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMetho
 		},
 	)
 	if payLetterRes.Code != nil {
-		err = errors.New(fmt.Sprintf("[%s]%s", *payLetterRes.Code, payLetterRes.Message))
+		err = errors.New(fmt.Sprintf("[%d]%s", *payLetterRes.Code, payLetterRes.Message))
 		return
 	}
 
@@ -183,6 +183,26 @@ func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMetho
 			method.MethodName = PayletterBankCode[method.MethodCode]
 		}
 		payLetterRes.MethodList[idx] = method
+	}
+
+	return
+}
+
+func (o *PayLetter) CancelEasyPay(req ReqCancelEasyPay) (payLetterRes ResCancelEasyPay, err error) {
+	req.SetIPAddress(o.IpAddr)
+	req.SetHashData(o.ClientID, o.PaymentAPIKey)
+
+	payLetterRes = utils.Post[ResCancelEasyPay](
+		easyPayCancelUrl,
+		req,
+		http.Header{
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
+			"Content-Type":  []string{"application/json"},
+		},
+	)
+	if payLetterRes.Code != nil {
+		err = errors.New(fmt.Sprintf("[%d]%s", *payLetterRes.Code, payLetterRes.Message))
+		return
 	}
 
 	return

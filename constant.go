@@ -47,6 +47,8 @@ const (
 	easyPayRegisterTestUrl            = "https://testppay.payletter.com/api/url/request/register-method"
 	easyPayGetRegisteredMethodUrl     = "https://pgapi.payletter.com/api/user/methods"
 	easyPayGetRegisteredMethodTestUrl = "https://testppay.payletter.com/api/user/methods"
+	easyPayCancelUrl                  = "https://pgapi.payletter.com/api/payments/cancel"
+	easyPayCancelTestUrl              = "https://testppay.payletter.com/api/payments/cancel"
 )
 
 var (
