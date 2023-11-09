@@ -156,10 +156,10 @@ type ReqRegisterEasyPay struct {
 }
 
 type ResRegisterEasyPay struct {
-	Token       *string
+	Token       *string `json:"token"`
 	RedirectUrl *string `json:"redirect_url"`
-	Code        *int
-	Message     string
+	Code        *int    `json:"code"`
+	Message     string  `json:"message"`
 }
 
 type ReqGetRegisteredEasyPayMethod struct {
@@ -185,6 +185,7 @@ type PayletterMethodCount struct {
 }
 
 type PayletterMethod struct {
+	// payletter response
 	PaymentMethod         string `json:"payment_method"`
 	Billkey               string `json:"billkey"`
 	AliasName             string `json:"alias_name"`
@@ -192,7 +193,6 @@ type PayletterMethod struct {
 	MethodRegDate         string `json:"method_reg_date"`
 	MethodInfo            string `json:"method_info"`
 	MethodCode            string `json:"method_code"`
-	MethodName            string
 	MethodImgUrl          string `json:"method_img_url"`
 	CardTypeCode          string `json:"card_type_code"`
 	InstallmentUseFlag    string `json:"installment_use_flag"`
@@ -202,4 +202,7 @@ type PayletterMethod struct {
 	ProductCode           string `json:"product_code"`
 	ProductName           string `json:"product_name"`
 	LastTranDate          string `json:"last_tran_date"`
+
+	// method code에 따른 method name
+	MethodName string
 }
