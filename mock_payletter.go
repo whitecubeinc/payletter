@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/whitecubeinc/go-utils"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -115,5 +116,48 @@ func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res *ResRegiste
 	}
 
 	res = &payletterRes
+	return
+}
+
+func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res *ResPayletterGetEasyPayMethods, err error) {
+	params := map[string]string{
+		"client_id": req.ClientID,
+		"user_id":   strconv.Itoa(req.UserID),
+		"req_date":  req.ReqDate,
+		"hash_data": req.HashData,
+	}
+
+	payletterRes := utils.Get[ResPayletterGetEasyPayMethods](
+		easyPayGetRegisteredMethodTestUrl,
+		params,
+		http.Header{
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Content-Type":  []string{"application/json"},
+		},
+	)
+	if payletterRes.Code != nil {
+		err = errors.New(fmt.Sprintf("[%s]%s", *payletterRes.Code, payletterRes.Message))
+		return
+	}
+
+	if payletterRes.MethodList == nil {
+		payletterRes.MethodList = make([]PayletterMethod, 0)
+	}
+
+	if payletterRes.MethodCount == nil {
+		payletterRes.MethodCount = make([]PayletterMethodCount, 0)
+	}
+
+	for idx, method := range payletterRes.MethodList {
+		switch method.PaymentMethod {
+		case PgCode.CreditCard:
+			method.MethodName = PayletterCardCode[method.MethodCode]
+		case PgCode.Easybank:
+			method.MethodName = PayletterBankCode[method.MethodCode]
+		}
+		payletterRes.MethodList[idx] = method
+	}
+	res = &payletterRes
+
 	return
 }

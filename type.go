@@ -10,6 +10,7 @@ import (
 
 type pgCode struct {
 	CreditCard string
+	Easybank   string
 }
 
 type IPayLetter interface {
@@ -21,6 +22,8 @@ type IPayLetter interface {
 	CancelTransaction(req ReqCancelTransaction) (res ResCancelTransaction, err error)
 	// RegisterEasyPay 간편결제 결제 수단 등록
 	RegisterEasyPay(req ReqRegisterEasyPay) (res *ResRegisterEasyPay, err error)
+	// GetRegisteredEasyPayMethods 간편결제 등록한 결제 수단 목록 조회
+	GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res *ResPayletterGetEasyPayMethods, err error)
 }
 
 type ClientInfo struct {
@@ -162,4 +165,46 @@ type ResRegisterEasyPay struct {
 	RedirectUrl *string `json:"redirect_url"`
 	Code        *int
 	Message     string
+}
+
+type ReqGetRegisteredEasyPayMethod struct {
+	ClientInfo
+	UserID   int    `json:"user_id"`
+	ReqDate  string `json:"req_date"`
+	HashData string `json:"hash_data"`
+}
+
+type ResPayletterGetEasyPayMethods struct {
+	TotalCount       int                    `json:"total_count"`
+	JoinDate         string                 `json:"join_date"`
+	MethodCount      []PayletterMethodCount `json:"method_count"`
+	MethodList       []PayletterMethod      `json:"method_list"`
+	PasswordSkipFlag string                 `json:"password_skip_flag"`
+	Code             *string                `json:",omitempty"`
+	Message          string                 `json:",omitempty"`
+}
+
+type PayletterMethodCount struct {
+	PaymentMethod string
+	Count         int
+}
+
+type PayletterMethod struct {
+	PaymentMethod         string `json:"payment_method"`
+	Billkey               string `json:"billkey"`
+	AliasName             string `json:"alias_name"`
+	FavoriteFlag          string `json:"favorite_flag"`
+	MethodRegDate         string `json:"method_reg_date"`
+	MethodInfo            string `json:"method_info"`
+	MethodCode            string `json:"method_code"`
+	MethodName            string
+	MethodImgUrl          string `json:"method_img_url"`
+	CardTypeCode          string `json:"card_type_code"`
+	InstallmentUseFlag    string `json:"installment_use_flag"`
+	MinInstallmentAmount  int    `json:"min_installment_amount"`
+	InstallmentMonths     string `json:"installment_months"`
+	FreeInstallmentMonths string `json:"free_installment_months"`
+	ProductCode           string `json:"product_code"`
+	ProductName           string `json:"product_name"`
+	LastTranDate          string `json:"last_tran_date"`
 }
