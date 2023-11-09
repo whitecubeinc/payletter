@@ -8,10 +8,6 @@ import (
 	"strings"
 )
 
-type pgCode struct {
-	CreditCard string
-}
-
 type IPayLetter interface {
 	// RegisterAutoPay 자동 결제 수단 등록
 	RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegisterAutoPay, err error)
@@ -19,6 +15,10 @@ type IPayLetter interface {
 	TransactionAutoPay(req ReqTransactionAutoPay) (res ResTransactionAutoPay, err error)
 	// CancelTransaction 결제 취소
 	CancelTransaction(req ReqCancelTransaction) (res ResCancelTransaction, err error)
+	// RegisterEasyPay 간편결제 결제 수단 등록
+	RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error)
+	// GetRegisteredEasyPayMethods 간편결제 등록한 결제 수단 목록 조회
+	GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayLetterGetEasyPayMethods, err error)
 }
 
 type ClientInfo struct {
@@ -29,17 +29,17 @@ type ClientInfo struct {
 
 type ReqRegisterAutoPay struct {
 	ClientInfo
-	PgCode           string
-	ServiceName      string
-	UserID           int64
-	UserName         string
-	OrderNo          string
-	Amount           int
-	ProductName      string
-	CustomParameter  string
-	ReturnUrl        string // POST 결제 성공 response = ResPaymentData
-	CancelUrl        string // GET 결제 중간에 취소
-	CallbackEndpoint string // POST
+	PgCode          string
+	ServiceName     string
+	UserID          int64
+	UserName        string
+	OrderNo         string
+	Amount          int
+	ProductName     string
+	CustomParameter string
+	ReturnUrl       string // POST 결제 성공 response = ResPaymentData
+	CancelUrl       string // GET 결제 중간에 취소
+	CallbackUrl     string // POST
 }
 
 type ResRegisterAutoPay struct {
@@ -142,4 +142,67 @@ type ResCancelTransaction struct {
 	TID    string `json:"tid"`
 	CID    string `json:"cid"`
 	Amount int    `json:"amount"`
+}
+
+type ReqRegisterEasyPay struct {
+	ClientInfo
+	UserID        int    `json:"user_id"`
+	ServiceName   string `json:"service_name"`
+	PaymentMethod string `json:"payment_method"`
+	ReturnUrl     string `json:"return_url"`
+	CancelUrl     string `json:"cancel_url"`
+	ReqDate       string `json:"req_date"`
+	HashData      string `json:"hash_data"`
+}
+
+type ResRegisterEasyPay struct {
+	Token       *string `json:"token"`
+	RedirectUrl *string `json:"redirect_url"`
+	Code        *int    `json:"code"`
+	Message     string  `json:"message"`
+}
+
+type ReqGetRegisteredEasyPayMethod struct {
+	ClientInfo
+	UserID   int    `json:"user_id"`
+	ReqDate  string `json:"req_date"`
+	HashData string `json:"hash_data"`
+}
+
+type ResPayLetterGetEasyPayMethods struct {
+	TotalCount       int                  `json:"total_count"`
+	JoinDate         string               `json:"join_date"`
+	MethodCount      []EasyPayMethodCount `json:"method_count"`
+	MethodList       []EasyPayMethod      `json:"method_list"`
+	PasswordSkipFlag string               `json:"password_skip_flag"`
+	Code             *string              `json:"code,omitempty"`
+	Message          string               `json:"message,omitempty"`
+}
+
+type EasyPayMethodCount struct {
+	PaymentMethod string `json:"paymentMethod"`
+	Count         int    `json:"count"`
+}
+
+type EasyPayMethod struct {
+	// payletter response
+	PaymentMethod         string `json:"payment_method"`
+	BillKey               string `json:"billkey"`
+	AliasName             string `json:"alias_name"`
+	FavoriteFlag          string `json:"favorite_flag"`
+	MethodRegDate         string `json:"method_reg_date"`
+	MethodInfo            string `json:"method_info"`
+	MethodCode            string `json:"method_code"`
+	MethodImgUrl          string `json:"method_img_url"`
+	CardTypeCode          string `json:"card_type_code"`
+	InstallmentUseFlag    string `json:"installment_use_flag"`
+	MinInstallmentAmount  int    `json:"min_installment_amount"`
+	InstallmentMonths     string `json:"installment_months"`
+	FreeInstallmentMonths string `json:"free_installment_months"`
+	ProductCode           string `json:"product_code"`
+	ProductName           string `json:"product_name"`
+	LastTranDate          string `json:"last_tran_date"`
+
+	// method code 에 따른 method name
+	MethodName string `json:"-"`
 }
