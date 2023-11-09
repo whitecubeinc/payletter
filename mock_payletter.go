@@ -10,27 +10,30 @@ import (
 )
 
 type MockPayLetter struct {
+	ClientInfo
 	Success bool
 }
 
 // GetSuccessMockPayLetter 무조건 결제 성공하는 Mock pay letter
-func GetSuccessMockPayLetter() IPayLetter {
+func GetSuccessMockPayLetter(c ClientInfo) IPayLetter {
 	return &MockPayLetter{
-		Success: true,
+		ClientInfo: c,
+		Success:    true,
 	}
 }
 
 // GetFailMockPayLetter 무조건 결제 실패하는 Mock pay letter
-func GetFailMockPayLetter() IPayLetter {
+func GetFailMockPayLetter(c ClientInfo) IPayLetter {
 	return &MockPayLetter{
-		Success: false,
+		ClientInfo: c,
+		Success:    false,
 	}
 }
 
 func (o *MockPayLetter) RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegisterAutoPay, err error) {
 	paymentData := reqPaymentData{
 		PgCode:          req.PgCode,
-		ClientID:        req.ClientID,
+		ClientID:        o.ClientID,
 		ServiceName:     req.ServiceName,
 		UserID:          req.UserID,
 		UserName:        req.UserName,
@@ -50,7 +53,7 @@ func (o *MockPayLetter) RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegister
 		registerAutoPayUrl,
 		paymentData,
 		http.Header{
-			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
 			"Content-Type":  []string{"application/json"},
 		},
 	)
@@ -104,7 +107,7 @@ func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegister
 		easyPayRegisterTestUrl,
 		req,
 		http.Header{
-			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
 			"Content-Type":  []string{"application/json"},
 		},
 	)
@@ -121,7 +124,7 @@ func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegister
 
 func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayLetterGetEasyPayMethods, err error) {
 	params := map[string]string{
-		"client_id": req.ClientID,
+		"client_id": o.ClientID,
 		"user_id":   strconv.Itoa(req.UserID),
 		"req_date":  req.ReqDate,
 		"hash_data": req.HashData,
@@ -131,7 +134,7 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 		easyPayGetRegisteredMethodTestUrl,
 		params,
 		http.Header{
-			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.SearchAPIKey)},
 			"Content-Type":  []string{"application/json"},
 		},
 	)

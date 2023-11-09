@@ -8,16 +8,20 @@ import (
 	"strconv"
 )
 
-type PayLetter struct{}
+type PayLetter struct {
+	ClientInfo
+}
 
-func GetPayLetter() IPayLetter {
-	return &PayLetter{}
+func GetPayLetter(c ClientInfo) IPayLetter {
+	return &PayLetter{
+		ClientInfo: c,
+	}
 }
 
 func (o *PayLetter) RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegisterAutoPay, err error) {
 	paymentData := reqPaymentData{
 		PgCode:          req.PgCode,
-		ClientID:        req.ClientID,
+		ClientID:        o.ClientID,
 		ServiceName:     req.ServiceName,
 		UserID:          req.UserID,
 		UserName:        req.UserName,
@@ -37,7 +41,7 @@ func (o *PayLetter) RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegisterAuto
 		registerAutoPayUrl,
 		paymentData,
 		http.Header{
-			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
 			"Content-Type":  []string{"application/json"},
 		},
 	)
@@ -66,7 +70,7 @@ func (o *PayLetter) TransactionAutoPay(req ReqTransactionAutoPay) (res ResTransa
 		transactionAutoPayUrl,
 		req,
 		http.Header{
-			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
 			"Content-Type":  []string{"application/json"},
 		},
 	)
@@ -96,7 +100,7 @@ func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTr
 		cancelTransactionUrl,
 		req,
 		http.Header{
-			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
 			"Content-Type":  []string{"application/json"},
 		},
 	)
@@ -127,7 +131,7 @@ func (o *PayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (payLetterRes ResReg
 		easyPayRegisterUrl,
 		req,
 		http.Header{
-			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
 			"Content-Type":  []string{"application/json"},
 		},
 	)
@@ -142,7 +146,7 @@ func (o *PayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (payLetterRes ResReg
 
 func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (payLetterRes ResPayLetterGetEasyPayMethods, err error) {
 	params := map[string]string{
-		"client_id": req.ClientID,
+		"client_id": o.ClientID,
 		"user_id":   strconv.Itoa(req.UserID),
 		"req_date":  req.ReqDate,
 		"hash_data": req.HashData,
@@ -152,7 +156,7 @@ func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMetho
 		easyPayGetRegisteredMethodUrl,
 		params,
 		http.Header{
-			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.SearchAPIKey)},
 			"Content-Type":  []string{"application/json"},
 		},
 	)

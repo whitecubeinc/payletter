@@ -22,13 +22,13 @@ type IPayLetter interface {
 }
 
 type ClientInfo struct {
-	APIKey   string `json:"-"`
-	ClientID string `json:"client_id"`
-	IpAddr   string `json:"ip_addr"`
+	PaymentAPIKey string `json:"-"` // PAYMENT KEY
+	SearchAPIKey  string `json:"-"` // SEARCH KEY
+	ClientID      string `json:"client_id"`
+	IpAddr        string `json:"ip_addr"`
 }
 
 type ReqRegisterAutoPay struct {
-	ClientInfo
 	PgCode          string
 	ServiceName     string
 	UserID          int64
@@ -49,7 +49,6 @@ type ResRegisterAutoPay struct {
 }
 
 type ReqTransactionAutoPay struct {
-	ClientInfo
 	PgCode      string `json:"pgcode"`
 	ServiceName string `json:"service_name"`
 	UserID      int64  `json:"user_id"`
@@ -132,7 +131,6 @@ func (o *ResPaymentData) Validate(paymentAPIKey string) (err error) {
 }
 
 type ReqCancelTransaction struct {
-	ClientInfo
 	PgCode string `json:"pgcode"`
 	UserID int64  `json:"user_id"`
 	TID    string `json:"tid"`
@@ -145,7 +143,6 @@ type ResCancelTransaction struct {
 }
 
 type ReqRegisterEasyPay struct {
-	ClientInfo
 	UserID        int    `json:"user_id"`
 	ServiceName   string `json:"service_name"`
 	PaymentMethod string `json:"payment_method"`
@@ -163,7 +160,6 @@ type ResRegisterEasyPay struct {
 }
 
 type ReqGetRegisteredEasyPayMethod struct {
-	ClientInfo
 	UserID   int    `json:"user_id"`
 	ReqDate  string `json:"req_date"`
 	HashData string `json:"hash_data"`
