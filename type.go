@@ -19,6 +19,8 @@ type IPayLetter interface {
 	TransactionAutoPay(req ReqTransactionAutoPay) (res ResTransactionAutoPay, err error)
 	// CancelTransaction 결제 취소
 	CancelTransaction(req ReqCancelTransaction) (res ResCancelTransaction, err error)
+	// RegisterEasyPay 간편결제 결제 수단 등록
+	RegisterEasyPay(req ReqRegisterEasyPay) (res *ResRegisterEasyPay, err error)
 }
 
 type ClientInfo struct {
@@ -29,17 +31,17 @@ type ClientInfo struct {
 
 type ReqRegisterAutoPay struct {
 	ClientInfo
-	PgCode           string
-	ServiceName      string
-	UserID           int64
-	UserName         string
-	OrderNo          string
-	Amount           int
-	ProductName      string
-	CustomParameter  string
-	ReturnUrl        string // POST 결제 성공 response = ResPaymentData
-	CancelUrl        string // GET 결제 중간에 취소
-	CallbackEndpoint string // POST
+	PgCode          string
+	ServiceName     string
+	UserID          int64
+	UserName        string
+	OrderNo         string
+	Amount          int
+	ProductName     string
+	CustomParameter string
+	ReturnUrl       string // POST 결제 성공 response = ResPaymentData
+	CancelUrl       string // GET 결제 중간에 취소
+	CallbackUrl     string // POST
 }
 
 type ResRegisterAutoPay struct {
@@ -142,4 +144,22 @@ type ResCancelTransaction struct {
 	TID    string `json:"tid"`
 	CID    string `json:"cid"`
 	Amount int    `json:"amount"`
+}
+
+type ReqRegisterEasyPay struct {
+	ClientInfo
+	UserID        int    `json:"user_id"`
+	ServiceName   string `json:"service_name"`
+	PaymentMethod string `json:"payment_method"`
+	ReturnUrl     string `json:"return_url"`
+	CancelUrl     string `json:"cancel_url"`
+	ReqDate       string `json:"req_date"`
+	HashData      string `json:"hash_data"`
+}
+
+type ResRegisterEasyPay struct {
+	Token       *string
+	RedirectUrl *string `json:"redirect_url"`
+	Code        *int
+	Message     string
 }

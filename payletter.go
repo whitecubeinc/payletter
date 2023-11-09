@@ -28,7 +28,7 @@ func (o *PayLetter) RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegisterAuto
 		ReceiptFlag:     "N",
 		CustomParameter: req.CustomParameter,
 		ReturnUrl:       req.ReturnUrl,
-		CallbackUrl:     req.CallbackEndpoint,
+		CallbackUrl:     req.CallbackUrl,
 		CancelUrl:       req.CancelUrl,
 	}
 
@@ -119,5 +119,25 @@ func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTr
 		Amount: utils.Any2IntMust(payLetterRes["amount"]),
 	}
 
+	return
+}
+
+func (o *PayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res *ResRegisterEasyPay, err error) {
+	payletterRes := utils.Post[ResRegisterEasyPay](
+		easyPayRegisterUrl,
+		req,
+		http.Header{
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Content-Type":  []string{"application/json"},
+		},
+	)
+
+	if payletterRes.Code != nil {
+		// 에러 발생
+		err = errors.New(fmt.Sprintf("[%d]%s", *payletterRes.Code, payletterRes.Message))
+		return
+	}
+
+	res = &payletterRes
 	return
 }

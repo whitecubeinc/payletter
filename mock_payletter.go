@@ -41,7 +41,7 @@ func (o *MockPayLetter) RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegister
 		ReceiptFlag:     "N",
 		CustomParameter: req.CustomParameter,
 		ReturnUrl:       req.ReturnUrl,
-		CallbackUrl:     req.CallbackEndpoint,
+		CallbackUrl:     req.CallbackUrl,
 		CancelUrl:       req.CancelUrl,
 	}
 
@@ -95,5 +95,25 @@ func (o *MockPayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCanc
 	} else {
 		err = errors.New("fake mock pay letter")
 	}
+	return
+}
+
+func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res *ResRegisterEasyPay, err error) {
+	payletterRes := utils.Post[ResRegisterEasyPay](
+		easyPayRegisterTestUrl,
+		req,
+		http.Header{
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", req.APIKey)},
+			"Content-Type":  []string{"application/json"},
+		},
+	)
+
+	if payletterRes.Code != nil {
+		// 에러 발생
+		err = errors.New(fmt.Sprintf("[%d]%s", *payletterRes.Code, payletterRes.Message))
+		return
+	}
+
+	res = &payletterRes
 	return
 }
