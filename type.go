@@ -306,7 +306,8 @@ func (o *ReqTransactionEasyPay) createHashData(clientId, apiKey string) string {
 
 type ReqTransactionNormalPay struct {
 	CommonTransactionData
-	NaverAPIKey string
+	NaverAPIClientId string
+	NaverAPIKey      string
 }
 
 type ResTransactionNormalPay struct {
