@@ -103,7 +103,9 @@ func (o *MockPayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCanc
 }
 
 func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error) {
+	req.setClientID(o.ClientID)
 	req.setHashData(o.PaymentAPIKey, o.ClientID)
+
 	payletterRes := utils.Post[ResRegisterEasyPay](
 		easyPayRegisterTestUrl,
 		req,
@@ -167,6 +169,7 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 }
 
 func (o *MockPayLetter) CancelEasyPay(req ReqCancelEasyPay) (payLetterRes ResCancelEasyPay, err error) {
+	req.setClientID(o.ClientID)
 	req.setIPAddress(o.IpAddr)
 	req.setHashData(o.ClientID, o.PaymentAPIKey)
 
