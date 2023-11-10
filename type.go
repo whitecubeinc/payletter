@@ -222,7 +222,7 @@ type EasyPayMethod struct {
 	LastTranDate          string `json:"last_tran_date"`
 
 	// method code 에 따른 method name
-	MethodName string `json:"-"`
+	MethodName string `json:"method_name"`
 }
 
 type ReqCancelEasyPay struct {
