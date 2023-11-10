@@ -16,11 +16,13 @@ type IPayLetter interface {
 	// CancelTransaction 결제 취소
 	CancelTransaction(req ReqCancelTransaction) (res ResCancelTransaction, err error)
 	// RegisterEasyPay 간편결제 결제 수단 등록
-	RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error)
+	RegisterEasyPay(req ReqRegisterEasyPay) (res ResEasyPayUI, err error)
 	// GetRegisteredEasyPayMethods 간편결제 등록한 결제 수단 목록 조회
 	GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMethod) (res ResPayLetterGetEasyPayMethods, err error)
 	// CancelEasyPay 간편결제 취소
 	CancelEasyPay(req ReqCancelEasyPay) (res ResCancelEasyPay, err error)
+	// TransactionEasyPay 간편결제 수단으로 결제
+	TransactionEasyPay(req ReqTransactionEasyPay) (res ResEasyPayUI, err error)
 }
 
 type ClientInfo struct {
@@ -79,12 +81,19 @@ type reqPaymentData struct {
 	Amount          int    `json:"amount"`
 	ProductName     string `json:"product_name"`
 	EmailFlag       string `json:"email_flag"`
+	EmailAddr       string `json:"email_addr"`
 	AutoPayFlag     string `json:"autopay_flag"`
 	ReceiptFlag     string `json:"receipt_flag"`
 	CustomParameter string `json:"custom_parameter"`
 	ReturnUrl       string `json:"return_url"`
 	CallbackUrl     string `json:"callback_url"`
 	CancelUrl       string `json:"cancel_url"`
+	ReqDate         string `json:"req_date,omitempty"`
+	HashData        string `json:"hash_data,omitempty"`
+	BillKey         string `json:"billkey,omitempty"`
+	ReceiptType     string `json:"receipt_type,omitempty"`
+	ReceiptInfo     string `json:"receipt_info,omitempty"`
+	InstallMonth    int    `json:"install_month,omitempty"`
 }
 
 type ResPaymentData struct {
@@ -166,7 +175,7 @@ func (o *ReqRegisterEasyPay) setHashData(apiKey string, clientId string) {
 	o.HashData = hex.EncodeToString(h[:])
 }
 
-type ResRegisterEasyPay struct {
+type ResEasyPayUI struct {
 	Token       *string `json:"token"`
 	RedirectUrl *string `json:"redirect_url"`
 	Code        *int    `json:"code"`
@@ -257,4 +266,33 @@ type ResCancelEasyPay struct {
 	CancelDate string `json:"cancel_date"`
 	Code       *int   `json:"code"`
 	Message    string `json:"message"`
+}
+
+type ReqTransactionEasyPay struct {
+	PgCode          string
+	UserID          int
+	UserName        string
+	ServiceName     string
+	OrderNo         string
+	Amount          int
+	ProductName     string
+	EmailFlag       string
+	EmailAddr       string
+	CustomParameter int
+	ReturnUrl       string
+	CallbackUrl     string
+	CancelUrl       string
+	ReqDate         string
+	BillKey         string
+	ReceiptFlag     string
+	ReceiptType     string
+	ReceiptInfo     string
+	InstallMonth    int
+}
+
+func (o *ReqTransactionEasyPay) createHashData(clientId, apiKey string) string {
+	originHashString := fmt.Sprintf("%s%d%s%s", clientId, o.UserID, o.ReqDate, apiKey)
+	h := sha256.Sum256([]byte(originHashString))
+
+	return hex.EncodeToString(h[:])
 }

@@ -102,11 +102,11 @@ func (o *MockPayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCanc
 	return
 }
 
-func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error) {
+func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResEasyPayUI, err error) {
 	req.setClientID(o.ClientID)
 	req.setHashData(o.PaymentAPIKey, o.ClientID)
 
-	payletterRes := utils.Post[ResRegisterEasyPay](
+	payletterRes := utils.Post[ResEasyPayUI](
 		easyPayRegisterTestUrl,
 		req,
 		http.Header{
@@ -181,6 +181,49 @@ func (o *MockPayLetter) CancelEasyPay(req ReqCancelEasyPay) (payLetterRes ResCan
 			"Content-Type":  []string{"application/json"},
 		},
 	)
+	if payLetterRes.Code != nil {
+		err = errors.New(fmt.Sprintf("[%d]%s", *payLetterRes.Code, payLetterRes.Message))
+		return
+	}
+
+	return
+}
+
+func (o *MockPayLetter) TransactionEasyPay(req ReqTransactionEasyPay) (payLetterRes ResEasyPayUI, err error) {
+	paymentData := reqPaymentData{
+		PgCode:          req.PgCode,
+		ClientID:        o.ClientID,
+		ServiceName:     req.ServiceName,
+		UserID:          int64(req.UserID),
+		UserName:        req.UserName,
+		OrderNo:         req.OrderNo,
+		Amount:          req.Amount,
+		ProductName:     req.ProductName,
+		EmailFlag:       req.EmailFlag,
+		EmailAddr:       req.EmailAddr,
+		AutoPayFlag:     "N",
+		ReceiptFlag:     req.ReceiptFlag,
+		CustomParameter: strconv.Itoa(req.CustomParameter),
+		ReturnUrl:       req.ReturnUrl,
+		CallbackUrl:     req.CallbackUrl,
+		CancelUrl:       req.CancelUrl,
+		ReqDate:         req.ReqDate,
+		HashData:        req.createHashData(o.ClientID, o.PaymentAPIKey),
+		BillKey:         req.BillKey,
+		ReceiptType:     req.ReceiptType,
+		ReceiptInfo:     req.ReceiptInfo,
+		InstallMonth:    req.InstallMonth,
+	}
+
+	payLetterRes = utils.Post[ResEasyPayUI](
+		registerAutoPayUrl,
+		paymentData,
+		http.Header{
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
+			"Content-Type":  []string{"application/json"},
+		},
+	)
+
 	if payLetterRes.Code != nil {
 		err = errors.New(fmt.Sprintf("[%d]%s", *payLetterRes.Code, payLetterRes.Message))
 		return
