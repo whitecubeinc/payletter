@@ -253,6 +253,7 @@ func (o *MockPayLetter) TransactionNormalPay(req ReqTransactionNormalPay) (payLe
 
 	apiKey := o.PaymentAPIKey
 	if req.PgCode == PgCode.NaverPay {
+		paymentData.ClientID = "whitecube1"
 		apiKey = req.NaverAPIKey
 	}
 
