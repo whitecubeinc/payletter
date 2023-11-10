@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/whitecubeinc/go-utils"
 	"strings"
 )
 
@@ -161,12 +162,14 @@ func (o *ResPaymentData) Validate(paymentAPIKey string) (err error) {
 	return
 }
 
-func (o *ResPaymentData) ReplacePayInfo() {
+func (o *ResPaymentData) UnmarshalJSON(data []byte) error {
+	*o = utils.ReturnUnmarshal[ResPaymentData](data)
 	if o.PgCode == PgCode.EasyBank {
 		o.PayInfo = BankCode[o.CardCode]
 	} else {
 		o.PayInfo = CardCode.ValueMap[o.CardCode]
 	}
+	return nil
 }
 
 type ReqCancelTransaction struct {
