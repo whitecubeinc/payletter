@@ -115,7 +115,7 @@ type reqPaymentData struct {
 	InstallMonth    string `json:"install_month,omitempty"`
 }
 
-type ResPaymentData struct {
+type BeforeResPaymentData struct {
 	Code                 string `json:"code" form:"code"`
 	Message              string `json:"message" form:"message"`
 	UserID               string `json:"user_id" form:"user_id"`
@@ -149,6 +149,9 @@ type ResPaymentData struct {
 		Type      string `json:"type" form:"type"`
 	} `json:"cash_receipt" form:"cash_receipt"`
 }
+type ResPaymentData struct {
+	BeforeResPaymentData
+}
 
 func (o *ResPaymentData) Validate(paymentAPIKey string) (err error) {
 	pgHashText := fmt.Sprintf("%s%d%s%s", o.UserID, o.Amount, o.Tid, paymentAPIKey)
@@ -163,7 +166,10 @@ func (o *ResPaymentData) Validate(paymentAPIKey string) (err error) {
 }
 
 func (o *ResPaymentData) UnmarshalJSON(data []byte) error {
-	*o = utils.ReturnUnmarshal[ResPaymentData](data)
+	before := utils.ReturnUnmarshal[BeforeResPaymentData](data) // TODO(Zeki) : 더 좋은 방법이 있을 것 같은데 우선 해보자
+	*o = ResPaymentData{
+		BeforeResPaymentData: before,
+	}
 	if o.PgCode == PgCode.EasyBank {
 		o.PayInfo = BankCode[o.CardCode]
 	} else {
