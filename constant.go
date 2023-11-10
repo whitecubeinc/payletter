@@ -7,7 +7,8 @@ import (
 
 type pgCode struct {
 	CreditCard string
-	Easybank   string
+	EasyBank   string
+	NaverPay   string
 }
 
 type payletterCardCode struct {
@@ -49,12 +50,15 @@ const (
 	easyPayGetRegisteredMethodTestUrl = "https://testppay.payletter.com/api/user/methods"
 	easyPayCancelUrl                  = "https://pgapi.payletter.com/api/payments/cancel"
 	easyPayCancelTestUrl              = "https://testppay.payletter.com/api/payments/cancel"
+	easyPayTransactionUrl             = "https://pgapi.payletter.com/api/url/request/request-payment"
+	easyPayTransactionTestUrl         = "https://testppay.payletter.com/api/url/request/request-payment"
+	normalTransactionUrl              = "https://pgapi.payletter.com/v1.0/payments/request"
 )
 
 var (
-	PgCode            = utils.NewStringEnum[pgCode](nil, strings.ToLower)
-	PayletterCardCode = utils.NewConstantFromTag[payletterCardCode](strings.ToUpper)
-	PayletterBankCode = map[string]string{
+	PgCode   = utils.NewStringEnum[pgCode](nil, strings.ToLower)
+	CardCode = utils.NewConstantFromTag[payletterCardCode](strings.ToUpper)
+	BankCode = map[string]string{
 		"003": "IBK기업은행",
 		"002": "KDB산업은행",
 		"004": "KB국민은행",

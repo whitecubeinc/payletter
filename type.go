@@ -71,6 +71,22 @@ type ResTransactionAutoPay struct {
 	TransactionDate string `json:"transaction_date"`
 }
 
+type CommonTransactionData struct {
+	PgCode          string
+	UserID          int
+	UserName        string
+	ServiceName     string
+	OrderNo         string
+	Amount          int
+	ProductName     string
+	EmailFlag       string
+	EmailAddr       string
+	CustomParameter int
+	ReturnUrl       string
+	CallbackUrl     string
+	CancelUrl       string
+}
+
 type reqPaymentData struct {
 	PgCode          string `json:"pgcode"`
 	ClientID        string `json:"client_id"`
@@ -178,8 +194,8 @@ func (o *ReqRegisterEasyPay) setHashData(apiKey string, clientId string) {
 type ResEasyPayUI struct {
 	Token       *string `json:"token"`
 	RedirectUrl *string `json:"redirect_url"`
-	Code        *int    `json:"code"`
-	Message     string  `json:"message"`
+	Code        *int    `json:"code,omitempty"`
+	Message     string  `json:"message,omitempty"`
 	OrderNo     string  `json:"order_no,omitempty"` // 간편결제에서만 사용하는 field
 }
 
@@ -270,25 +286,13 @@ type ResCancelEasyPay struct {
 }
 
 type ReqTransactionEasyPay struct {
-	PgCode          string
-	UserID          int
-	UserName        string
-	ServiceName     string
-	OrderNo         string
-	Amount          int
-	ProductName     string
-	EmailFlag       string
-	EmailAddr       string
-	CustomParameter int
-	ReturnUrl       string
-	CallbackUrl     string
-	CancelUrl       string
-	ReqDate         string
-	BillKey         string
-	ReceiptFlag     string
-	ReceiptType     string
-	ReceiptInfo     string
-	InstallMonth    int
+	CommonTransactionData
+	ReqDate      string
+	BillKey      string
+	ReceiptFlag  string
+	ReceiptType  string
+	ReceiptInfo  string
+	InstallMonth int
 }
 
 func (o *ReqTransactionEasyPay) createHashData(clientId, apiKey string) string {
@@ -296,4 +300,18 @@ func (o *ReqTransactionEasyPay) createHashData(clientId, apiKey string) string {
 	h := sha256.Sum256([]byte(originHashString))
 
 	return hex.EncodeToString(h[:])
+}
+
+type ReqTransactionNormalPay struct {
+	CommonTransactionData
+	NaverAPIKey string
+}
+
+type ResTransactionNormalPay struct {
+	MobileUrl string `json:"mobile_url"`
+	OnlineUrl string `json:"online_url"`
+	OrderNo   string `json:"order_no,omitempty"`
+	Token     int64  `json:"token"`
+	Code      *int   `json:"code,omitempty"`
+	Message   string `json:"message,omitempty"`
 }
