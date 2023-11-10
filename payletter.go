@@ -127,6 +127,7 @@ func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTr
 }
 
 func (o *PayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (payLetterRes ResRegisterEasyPay, err error) {
+	req.setClientID(o.ClientID)
 	req.setHashData(o.PaymentAPIKey, o.ClientID)
 
 	payLetterRes = utils.Post[ResRegisterEasyPay](
