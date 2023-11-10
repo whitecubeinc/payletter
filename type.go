@@ -23,6 +23,8 @@ type IPayLetter interface {
 	CancelEasyPay(req ReqCancelEasyPay) (res ResCancelEasyPay, err error)
 	// TransactionEasyPay 간편결제 수단으로 결제
 	TransactionEasyPay(req ReqTransactionEasyPay) (res ResEasyPayUI, err error)
+	// TransactionNormalPay 일반 페이레터 결제
+	TransactionNormalPay(req ReqTransactionNormalPay) (res ResTransactionNormalPay, err error)
 }
 
 type ClientInfo struct {
