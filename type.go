@@ -133,6 +133,8 @@ type ResPaymentData struct {
 	PgCode               string `json:"pgcode" form:"pgcode"`
 	DomesticFlag         string `json:"domestic_flag" form:"domestic_flag"`
 	BillKey              string `json:"billkey" form:"billkey"`
+	InstallMonth         string `json:"install_month"`
+	CardCode             string `json:"card_code"`
 	CardInfo             string `json:"card_info" form:"card_info"`
 	PayHash              string `json:"payhash" form:"payhash"`
 	DisposableCupDeposit int    `json:"disposable_cup_deposit" form:"disposable_cup_deposit"`
@@ -157,6 +159,14 @@ func (o *ResPaymentData) Validate(paymentAPIKey string) (err error) {
 	}
 
 	return
+}
+
+func (o *ResPaymentData) ReplacePayInfo() {
+	if o.PgCode == PgCode.EasyBank {
+		o.PayInfo = BankCode[o.CardCode]
+	} else {
+		o.PayInfo = CardCode.ValueMap[o.CardCode]
+	}
 }
 
 type ReqCancelTransaction struct {
