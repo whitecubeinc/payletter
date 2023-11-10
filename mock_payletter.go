@@ -103,7 +103,7 @@ func (o *MockPayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCanc
 }
 
 func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResRegisterEasyPay, err error) {
-	req.SetHashData(o.PaymentAPIKey, o.ClientID)
+	req.setHashData(o.PaymentAPIKey, o.ClientID)
 	payletterRes := utils.Post[ResRegisterEasyPay](
 		easyPayRegisterTestUrl,
 		req,
@@ -128,7 +128,7 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 		"client_id": o.ClientID,
 		"user_id":   strconv.Itoa(req.UserID),
 		"req_date":  req.ReqDate,
-		"hash_data": req.CreateHashData(o.PaymentAPIKey, o.ClientID),
+		"hash_data": req.createHashData(o.PaymentAPIKey, o.ClientID),
 	}
 
 	payletterRes := utils.Get[ResPayLetterGetEasyPayMethods](
@@ -167,8 +167,8 @@ func (o *MockPayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayM
 }
 
 func (o *MockPayLetter) CancelEasyPay(req ReqCancelEasyPay) (payLetterRes ResCancelEasyPay, err error) {
-	req.SetIPAddress(o.IpAddr)
-	req.SetHashData(o.ClientID, o.PaymentAPIKey)
+	req.setIPAddress(o.IpAddr)
+	req.setHashData(o.ClientID, o.PaymentAPIKey)
 
 	payLetterRes = utils.Post[ResCancelEasyPay](
 		easyPayCancelTestUrl,

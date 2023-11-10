@@ -24,8 +24,8 @@ type IPayLetter interface {
 }
 
 type ClientInfo struct {
-	PaymentAPIKey string `json:"payment_api_key"` // PAYMENT KEY
-	SearchAPIKey  string `json:"search_api_key"`  // SEARCH KEY
+	PaymentAPIKey string `json:"-"` // PAYMENT KEY
+	SearchAPIKey  string `json:"-"` // SEARCH KEY
 	ClientID      string `json:"client_id"`
 	IpAddr        string `json:"ip_addr"`
 }
@@ -145,6 +145,7 @@ type ResCancelTransaction struct {
 }
 
 type ReqRegisterEasyPay struct {
+	ClientID      string `json:"client_id"`
 	UserID        int    `json:"user_id"`
 	ServiceName   string `json:"service_name"`
 	PaymentMethod string `json:"payment_method"`
@@ -154,7 +155,11 @@ type ReqRegisterEasyPay struct {
 	HashData      string `json:"hash_data"`
 }
 
-func (o *ReqRegisterEasyPay) SetHashData(apiKey string, clientId string) {
+func (o *ReqRegisterEasyPay) setClientID(clientID string) {
+	o.ClientID = clientID
+}
+
+func (o *ReqRegisterEasyPay) setHashData(apiKey string, clientId string) {
 	originHashString := fmt.Sprintf("%s%d%s%s", clientId, o.UserID, o.ReqDate, apiKey)
 	h := sha256.Sum256([]byte(originHashString))
 
@@ -173,7 +178,7 @@ type ReqGetRegisteredEasyPayMethod struct {
 	ReqDate string `json:"req_date"`
 }
 
-func (o *ReqGetRegisteredEasyPayMethod) CreateHashData(apiKey string, clientId string) string {
+func (o *ReqGetRegisteredEasyPayMethod) createHashData(apiKey string, clientId string) string {
 	originHashString := fmt.Sprintf("%s%d%s%s", clientId, o.UserID, o.ReqDate, apiKey)
 	h := sha256.Sum256([]byte(originHashString))
 
@@ -221,6 +226,7 @@ type EasyPayMethod struct {
 }
 
 type ReqCancelEasyPay struct {
+	ClientID string `json:"client_id"`
 	UserID   int    `json:"user_id"`
 	Tid      string `json:"tid"`
 	Amount   int    `json:"amount"`
@@ -229,11 +235,15 @@ type ReqCancelEasyPay struct {
 	IpAddr   string `json:"ip_addr"`
 }
 
-func (o *ReqCancelEasyPay) SetIPAddress(ipAddr string) {
+func (o *ReqCancelEasyPay) setClientID(clientID string) {
+	o.ClientID = clientID
+}
+
+func (o *ReqCancelEasyPay) setIPAddress(ipAddr string) {
 	o.IpAddr = ipAddr
 }
 
-func (o *ReqCancelEasyPay) SetHashData(clientId, apiKey string) {
+func (o *ReqCancelEasyPay) setHashData(clientId, apiKey string) {
 	originHashString := fmt.Sprintf("%s%s%d%s%s", clientId, o.Tid, o.Amount, o.ReqDate, apiKey)
 	h := sha256.Sum256([]byte(originHashString))
 

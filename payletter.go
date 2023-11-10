@@ -127,7 +127,7 @@ func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTr
 }
 
 func (o *PayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (payLetterRes ResRegisterEasyPay, err error) {
-	req.SetHashData(o.PaymentAPIKey, o.ClientID)
+	req.setHashData(o.PaymentAPIKey, o.ClientID)
 
 	payLetterRes = utils.Post[ResRegisterEasyPay](
 		easyPayRegisterUrl,
@@ -151,7 +151,7 @@ func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMetho
 		"client_id": o.ClientID,
 		"user_id":   strconv.Itoa(req.UserID),
 		"req_date":  req.ReqDate,
-		"hash_data": req.CreateHashData(o.PaymentAPIKey, o.ClientID),
+		"hash_data": req.createHashData(o.PaymentAPIKey, o.ClientID),
 	}
 
 	payLetterRes = utils.Get[ResPayLetterGetEasyPayMethods](
@@ -189,8 +189,9 @@ func (o *PayLetter) GetRegisteredEasyPayMethods(req ReqGetRegisteredEasyPayMetho
 }
 
 func (o *PayLetter) CancelEasyPay(req ReqCancelEasyPay) (payLetterRes ResCancelEasyPay, err error) {
-	req.SetIPAddress(o.IpAddr)
-	req.SetHashData(o.ClientID, o.PaymentAPIKey)
+	req.setClientID(o.ClientID)
+	req.setIPAddress(o.IpAddr)
+	req.setHashData(o.ClientID, o.PaymentAPIKey)
 
 	payLetterRes = utils.Post[ResCancelEasyPay](
 		easyPayCancelUrl,
