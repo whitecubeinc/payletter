@@ -93,7 +93,7 @@ type reqPaymentData struct {
 	BillKey         string `json:"billkey,omitempty"`
 	ReceiptType     string `json:"receipt_type,omitempty"`
 	ReceiptInfo     string `json:"receipt_info,omitempty"`
-	InstallMonth    int    `json:"install_month,omitempty"`
+	InstallMonth    string `json:"install_month,omitempty"`
 }
 
 type ResPaymentData struct {
@@ -180,6 +180,7 @@ type ResEasyPayUI struct {
 	RedirectUrl *string `json:"redirect_url"`
 	Code        *int    `json:"code"`
 	Message     string  `json:"message"`
+	OrderNo     string  `json:"order_no,omitempty"` // 간편결제에서만 사용하는 field
 }
 
 type ReqGetRegisteredEasyPayMethod struct {

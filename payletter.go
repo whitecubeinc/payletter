@@ -233,7 +233,7 @@ func (o *PayLetter) TransactionEasyPay(req ReqTransactionEasyPay) (payLetterRes 
 		BillKey:         req.BillKey,
 		ReceiptType:     req.ReceiptType,
 		ReceiptInfo:     req.ReceiptInfo,
-		InstallMonth:    req.InstallMonth,
+		InstallMonth:    fmt.Sprintf("%02d", req.InstallMonth),
 	}
 
 	payLetterRes = utils.Post[ResEasyPayUI](
