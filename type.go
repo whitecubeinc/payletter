@@ -24,8 +24,8 @@ type IPayLetter interface {
 }
 
 type ClientInfo struct {
-	PaymentAPIKey string `json:"-"` // PAYMENT KEY
-	SearchAPIKey  string `json:"-"` // SEARCH KEY
+	PaymentAPIKey string `json:"payment_api_key"` // PAYMENT KEY
+	SearchAPIKey  string `json:"search_api_key"`  // SEARCH KEY
 	ClientID      string `json:"client_id"`
 	IpAddr        string `json:"ip_addr"`
 }
