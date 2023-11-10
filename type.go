@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/whitecubeinc/go-utils"
 	"strings"
 )
 
@@ -115,7 +114,7 @@ type reqPaymentData struct {
 	InstallMonth    string `json:"install_month,omitempty"`
 }
 
-type BeforeResPaymentData struct {
+type ResPaymentData struct {
 	Code                 string `json:"code" form:"code"`
 	Message              string `json:"message" form:"message"`
 	UserID               string `json:"user_id" form:"user_id"`
@@ -149,9 +148,6 @@ type BeforeResPaymentData struct {
 		Type      string `json:"type" form:"type"`
 	} `json:"cash_receipt" form:"cash_receipt"`
 }
-type ResPaymentData struct {
-	BeforeResPaymentData
-}
 
 func (o *ResPaymentData) Validate(paymentAPIKey string) (err error) {
 	pgHashText := fmt.Sprintf("%s%d%s%s", o.UserID, o.Amount, o.Tid, paymentAPIKey)
@@ -165,17 +161,12 @@ func (o *ResPaymentData) Validate(paymentAPIKey string) (err error) {
 	return
 }
 
-func (o *ResPaymentData) UnmarshalJSON(data []byte) error {
-	before := utils.ReturnUnmarshal[BeforeResPaymentData](data) // TODO(Zeki) : 더 좋은 방법이 있을 것 같은데 우선 해보자
-	*o = ResPaymentData{
-		BeforeResPaymentData: before,
-	}
+func (o *ResPaymentData) ReplacePayInfo() {
 	if o.PgCode == PgCode.EasyBank {
 		o.PayInfo = BankCode[o.CardCode]
 	} else {
 		o.PayInfo = CardCode.ValueMap[o.CardCode]
 	}
-	return nil
 }
 
 type ReqCancelTransaction struct {
