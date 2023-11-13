@@ -55,6 +55,7 @@ type ResRegisterAutoPay struct {
 }
 
 type ReqTransactionAutoPay struct {
+	ClientInfo
 	PgCode      string `json:"pgcode"`
 	ServiceName string `json:"service_name"`
 	UserID      int64  `json:"user_id"`
@@ -170,6 +171,7 @@ func (o *ResPaymentData) ReplacePayInfo() {
 }
 
 type ReqCancelTransaction struct {
+	ClientInfo
 	PgCode string `json:"pgcode"`
 	UserID int64  `json:"user_id"`
 	TID    string `json:"tid"`

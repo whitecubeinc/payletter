@@ -66,6 +66,7 @@ func (o *PayLetter) RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegisterAuto
 }
 
 func (o *PayLetter) TransactionAutoPay(req ReqTransactionAutoPay) (res ResTransactionAutoPay, err error) {
+	req.ClientInfo = o.ClientInfo
 	payLetterRes := utils.Post[utils.M](
 		transactionAutoPayUrl,
 		req,
@@ -96,6 +97,7 @@ func (o *PayLetter) TransactionAutoPay(req ReqTransactionAutoPay) (res ResTransa
 }
 
 func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTransaction, err error) {
+	req.ClientInfo = o.ClientInfo
 	payLetterRes := utils.Post[utils.M](
 		cancelTransactionUrl,
 		req,
