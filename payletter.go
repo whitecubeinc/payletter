@@ -259,7 +259,7 @@ func (o *PayLetter) TransactionNormalPay(req ReqTransactionNormalPay) (payLetter
 	paymentData := reqPaymentData{
 		PgCode:          req.PgCode,
 		ServiceName:     req.ServiceName,
-		BillKey:         o.ClientID,
+		ClientID:        o.ClientID,
 		UserID:          int64(req.UserID),
 		UserName:        req.UserName,
 		OrderNo:         req.OrderNo,
