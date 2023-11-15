@@ -258,8 +258,8 @@ func (o *PayLetter) TransactionEasyPay(req ReqTransactionEasyPay) (payLetterRes 
 func (o *PayLetter) TransactionNormalPay(req ReqTransactionNormalPay) (payLetterRes ResTransactionNormalPay, err error) {
 	paymentData := reqPaymentData{
 		PgCode:          req.PgCode,
-		ClientID:        o.ClientID,
 		ServiceName:     req.ServiceName,
+		BillKey:         o.ClientID,
 		UserID:          int64(req.UserID),
 		UserName:        req.UserName,
 		OrderNo:         req.OrderNo,
@@ -275,8 +275,9 @@ func (o *PayLetter) TransactionNormalPay(req ReqTransactionNormalPay) (payLetter
 	}
 
 	apiKey := o.PaymentAPIKey
-	if req.PgCode == PgCode.NaverPay {
+	if req.PgCode == PgCode.NaverPay { // 네이버페이는 client id 와 api key 가 다름
 		apiKey = req.NaverAPIKey
+		paymentData.ClientID = req.NaverAPIClientId
 	}
 
 	payLetterRes = utils.Post[ResTransactionNormalPay](
