@@ -172,9 +172,11 @@ func (o *ResPaymentData) ReplacePayInfo() {
 
 type ReqCancelTransaction struct {
 	ClientInfo
-	PgCode string `json:"pgcode"`
-	UserID int64  `json:"user_id"`
-	TID    string `json:"tid"`
+	PgCode           string `json:"pgcode"`
+	UserID           int64  `json:"user_id"`
+	TID              string `json:"tid"`
+	NaverAPIClientId string `json:"-"`
+	NaverAPIKey      string `json:"-"`
 }
 
 type ResCancelTransaction struct {

@@ -98,11 +98,18 @@ func (o *PayLetter) TransactionAutoPay(req ReqTransactionAutoPay) (res ResTransa
 
 func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTransaction, err error) {
 	req.ClientInfo = o.ClientInfo
+
+	apiKey := o.PaymentAPIKey
+	if req.PgCode == PgCode.NaverPay { // 네이버페이는 client id 와 api key 가 다름
+		apiKey = req.NaverAPIKey
+		req.ClientInfo.ClientID = req.NaverAPIClientId
+	}
+
 	payLetterRes := utils.Post[utils.M](
 		cancelTransactionUrl,
 		req,
 		http.Header{
-			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", apiKey)},
 			"Content-Type":  []string{"application/json"},
 		},
 	)
