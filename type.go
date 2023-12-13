@@ -179,6 +179,14 @@ type ReqCancelTransaction struct {
 	NaverAPIKey      string `json:"-"`
 }
 
+type cancelTransactionData struct {
+	PgCode   string `json:"pgcode"`
+	UserID   int64  `json:"user_id"`
+	TID      string `json:"tid"`
+	ClientID string `json:"client_id"`
+	IpAddr   string `json:"ip_addr"`
+}
+
 type ResCancelTransaction struct {
 	TID    string `json:"tid"`
 	CID    string `json:"cid"`
