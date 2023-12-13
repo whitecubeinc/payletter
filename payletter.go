@@ -66,10 +66,12 @@ func (o *PayLetter) RegisterAutoPay(req ReqRegisterAutoPay) (res ResRegisterAuto
 }
 
 func (o *PayLetter) TransactionAutoPay(req ReqTransactionAutoPay) (res ResTransactionAutoPay, err error) {
-	req.ClientInfo = o.ClientInfo
 	payLetterRes := utils.Post[utils.M](
 		transactionAutoPayUrl,
-		req,
+		reqTransactionAutoPay{
+			ClientInfo:            o.ClientInfo,
+			ReqTransactionAutoPay: req,
+		},
 		http.Header{
 			"Authorization": []string{fmt.Sprintf("PLKEY %s", o.PaymentAPIKey)},
 			"Content-Type":  []string{"application/json"},
@@ -97,18 +99,15 @@ func (o *PayLetter) TransactionAutoPay(req ReqTransactionAutoPay) (res ResTransa
 }
 
 func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTransaction, err error) {
-	cancelData := cancelTransactionData{
-		PgCode:   req.PgCode,
-		ClientID: o.ClientInfo.ClientID,
-		UserID:   req.UserID,
-		TID:      req.TID,
-		IpAddr:   req.IpAddr,
+	cancelData := reqCancelTransaction{
+		ClientInfo:           o.ClientInfo,
+		ReqCancelTransaction: req,
 	}
 
-	apiKey := o.PaymentAPIKey
-	if cancelData.PgCode == PgCode.NaverPay { // 네이버페이는 client id 와 api key 가 다름
-		apiKey = req.NaverAPIKey
-		cancelData.ClientID = req.NaverAPIClientId
+	apiKey := o.ClientInfo.PaymentAPIKey
+	if cancelData.ReqCancelTransaction.PgCode == PgCode.NaverPay { // 네이버페이는 client id 와 api key 가 다름
+		apiKey = cancelData.ReqCancelTransaction.NaverAPIKey
+		cancelData.ClientInfo.ClientID = cancelData.ReqCancelTransaction.NaverAPIClientId
 	}
 
 	payLetterRes := utils.Post[utils.M](

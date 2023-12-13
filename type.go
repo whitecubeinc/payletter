@@ -55,7 +55,6 @@ type ResRegisterAutoPay struct {
 }
 
 type ReqTransactionAutoPay struct {
-	ClientInfo
 	PgCode      string `json:"pgcode"`
 	ServiceName string `json:"service_name"`
 	UserID      int64  `json:"user_id"`
@@ -64,6 +63,11 @@ type ReqTransactionAutoPay struct {
 	Amount      int    `json:"amount"`
 	ProductName string `json:"product_name"`
 	BillKey     string `json:"billkey"`
+}
+
+type reqTransactionAutoPay struct {
+	ClientInfo
+	ReqTransactionAutoPay
 }
 
 type ResTransactionAutoPay struct {
@@ -171,7 +175,6 @@ func (o *ResPaymentData) ReplacePayInfo() {
 }
 
 type ReqCancelTransaction struct {
-	ClientInfo
 	PgCode           string `json:"pgcode"`
 	UserID           int64  `json:"user_id"`
 	TID              string `json:"tid"`
@@ -179,12 +182,9 @@ type ReqCancelTransaction struct {
 	NaverAPIKey      string `json:"-"`
 }
 
-type cancelTransactionData struct {
-	PgCode   string `json:"pgcode"`
-	UserID   int64  `json:"user_id"`
-	TID      string `json:"tid"`
-	ClientID string `json:"client_id"`
-	IpAddr   string `json:"ip_addr"`
+type reqCancelTransaction struct {
+	ClientInfo
+	ReqCancelTransaction
 }
 
 type ResCancelTransaction struct {
