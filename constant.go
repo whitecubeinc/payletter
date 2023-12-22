@@ -9,6 +9,17 @@ type pgCode struct {
 	CreditCard string
 	EasyBank   string
 	NaverPay   string
+	NaverCard  string
+	NaverPoint string
+}
+
+func (o *pgCode) IsNaverCode(code string) bool {
+	switch code {
+	case o.NaverPoint, o.NaverCard, o.NaverPay:
+		return true
+	default:
+		return false
+	}
 }
 
 type payletterCardCode struct {

@@ -105,7 +105,7 @@ func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTr
 	}
 
 	apiKey := o.ClientInfo.PaymentAPIKey
-	if cancelData.ReqCancelTransaction.PgCode == PgCode.NaverPay { // 네이버페이는 client id 와 api key 가 다름
+	if PgCode.IsNaverCode(cancelData.ReqCancelTransaction.PgCode) { // 네이버페이는 client id 와 api key 가 다름
 		apiKey = cancelData.ReqCancelTransaction.NaverAPIKey
 		cancelData.ClientInfo.ClientID = cancelData.ReqCancelTransaction.NaverAPIClientId
 	}
@@ -287,7 +287,7 @@ func (o *PayLetter) TransactionNormalPay(req ReqTransactionNormalPay) (payLetter
 	}
 
 	apiKey := o.PaymentAPIKey
-	if req.PgCode == PgCode.NaverPay { // 네이버페이는 client id 와 api key 가 다름
+	if PgCode.IsNaverCode(req.PgCode) { // 네이버페이는 client id 와 api key 가 다름
 		apiKey = req.NaverAPIKey
 		paymentData.ClientID = req.NaverAPIClientId
 	}
