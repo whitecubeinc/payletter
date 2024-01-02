@@ -55,6 +55,7 @@ const (
 	registerAutoPayUrl                = "https://pgapi.payletter.com/v1.0/payments/request"
 	transactionAutoPayUrl             = "https://pgapi.payletter.com/v1.0/payments/autopay"
 	cancelTransactionUrl              = "https://pgapi.payletter.com/v1.0/payments/cancel"
+	partialCancelTransactionUrl       = "https://pgapi.payletter.com/v1.0/payments/cancel/partial"
 	easyPayRegisterUrl                = "https://ppay.payletter.com/api/url/request/register-method"
 	easyPayRegisterTestUrl            = "https://testppay.payletter.com/api/url/request/register-method"
 	easyPayGetRegisteredMethodUrl     = "https://ppay.payletter.com/api/user/methods"
