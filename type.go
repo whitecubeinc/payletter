@@ -15,6 +15,8 @@ type IPayLetter interface {
 	TransactionAutoPay(req ReqTransactionAutoPay) (res ResTransactionAutoPay, err error)
 	// CancelTransaction 결제 취소
 	CancelTransaction(req ReqCancelTransaction) (res ResCancelTransaction, err error)
+	// PartialCancelTransaction 부분 결제 취소
+	PartialCancelTransaction(req ReqPartialCancelTransaction) (res ResPartialCancelTransaction, err error)
 	// RegisterEasyPay 간편결제 결제 수단 등록
 	RegisterEasyPay(req ReqRegisterEasyPay) (res ResEasyPayUI, err error)
 	// GetRegisteredEasyPayMethods 간편결제 등록한 결제 수단 목록 조회
@@ -188,6 +190,26 @@ type reqCancelTransaction struct {
 }
 
 type ResCancelTransaction struct {
+	TID    string `json:"tid"`
+	CID    string `json:"cid"`
+	Amount int    `json:"amount"`
+}
+
+type ReqPartialCancelTransaction struct {
+	PgCode           string `json:"pgcode"`
+	UserID           int64  `json:"user_id"`
+	TID              string `json:"tid"`
+	Amount           int    `json:"amount"`
+	NaverAPIClientId string `json:"-"`
+	NaverAPIKey      string `json:"-"`
+}
+
+type reqPartialCancelTransaction struct {
+	ClientInfo
+	ReqPartialCancelTransaction
+}
+
+type ResPartialCancelTransaction struct {
 	TID    string `json:"tid"`
 	CID    string `json:"cid"`
 	Amount int    `json:"amount"`

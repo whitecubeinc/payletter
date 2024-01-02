@@ -140,6 +140,48 @@ func (o *PayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCancelTr
 	return
 }
 
+func (o *PayLetter) PartialCancelTransaction(req ReqPartialCancelTransaction) (res ResPartialCancelTransaction, err error) {
+	cancelData := reqPartialCancelTransaction{
+		ClientInfo:                  o.ClientInfo,
+		ReqPartialCancelTransaction: req,
+	}
+
+	apiKey := o.ClientInfo.PaymentAPIKey
+	if PgCode.IsNaverCode(cancelData.ReqPartialCancelTransaction.PgCode) { // 네이버페이는 client id 와 api key 가 다름
+		apiKey = cancelData.ReqPartialCancelTransaction.NaverAPIKey
+		cancelData.ClientInfo.ClientID = cancelData.ReqPartialCancelTransaction.NaverAPIClientId
+	}
+
+	payLetterRes := utils.Post[utils.M](
+		partialCancelTransactionUrl,
+		cancelData,
+		http.Header{
+			"Authorization": []string{fmt.Sprintf("PLKEY %s", apiKey)},
+			"Content-Type":  []string{"application/json"},
+		},
+	)
+
+	if v, exists := payLetterRes["error"]; exists { // 500 error
+		e := v.(map[string]any)
+		err = errors.New(fmt.Sprintf("[%v]%v", e["code"], e["message"]))
+		return
+	}
+
+	if code, exists := payLetterRes["code"]; exists {
+		// 에러 발생
+		err = errors.New(fmt.Sprintf("[%v]%v", code, payLetterRes["message"]))
+		return
+	}
+
+	res = ResPartialCancelTransaction{
+		TID:    payLetterRes["tid"].(string),
+		CID:    payLetterRes["cid"].(string),
+		Amount: utils.Any2IntMust(payLetterRes["amount"]),
+	}
+
+	return
+}
+
 func (o *PayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (payLetterRes ResEasyPayUI, err error) {
 	req.setClientID(o.ClientID)
 	req.setHashData(o.PaymentAPIKey, o.ClientID)
