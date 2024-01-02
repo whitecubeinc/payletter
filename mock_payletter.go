@@ -102,6 +102,15 @@ func (o *MockPayLetter) CancelTransaction(req ReqCancelTransaction) (res ResCanc
 	return
 }
 
+func (o *MockPayLetter) PartialCancelTransaction(req ReqPartialCancelTransaction) (res ResPartialCancelTransaction, err error) {
+	if o.Success {
+		res.TID = req.TID
+	} else {
+		err = errors.New("fake mock pay letter")
+	}
+	return
+}
+
 func (o *MockPayLetter) RegisterEasyPay(req ReqRegisterEasyPay) (res ResEasyPayUI, err error) {
 	req.setClientID(o.ClientID)
 	req.setHashData(o.PaymentAPIKey, o.ClientID)
