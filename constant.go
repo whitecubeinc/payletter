@@ -51,6 +51,11 @@ type payletterCardCode struct {
 	ValueMap map[string]string
 }
 
+type transactionDateType struct {
+	Transaction string
+	Settle      string
+}
+
 const (
 	registerAutoPayUrl                = "https://pgapi.payletter.com/v1.0/payments/request"
 	transactionAutoPayUrl             = "https://pgapi.payletter.com/v1.0/payments/autopay"
@@ -65,6 +70,7 @@ const (
 	easyPayTransactionUrl             = "https://ppay.payletter.com/api/url/request/request-payment"
 	easyPayTransactionTestUrl         = "https://testppay.payletter.com/api/url/request/request-payment"
 	normalTransactionUrl              = "https://pgapi.payletter.com/v1.0/payments/request"
+	getTransactionListUrl             = "https://pgapi.payletter.com/v1.0/payments/transaction/list"
 )
 
 var (
@@ -95,4 +101,5 @@ var (
 		"064": "산림조합중앙회",
 		"071": "우체국은행",
 	}
+	TransactionDateType = utils.NewStringEnum[transactionDateType](nil, strings.ToLower)
 )

@@ -281,3 +281,9 @@ func (o *MockPayLetter) TransactionNormalPay(req ReqTransactionNormalPay) (payLe
 	}
 	return
 }
+
+func (o *MockPayLetter) GetTransactionList(_ ReqGetTransactionList) (res ResGetTransactionList, err error) {
+	res.TotalCount = 0
+	res.List = make([]Transaction, 0)
+	return
+}

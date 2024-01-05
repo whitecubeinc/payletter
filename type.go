@@ -27,6 +27,8 @@ type IPayLetter interface {
 	TransactionEasyPay(req ReqTransactionEasyPay) (res ResEasyPayUI, err error)
 	// TransactionNormalPay 일반 페이레터 결제
 	TransactionNormalPay(req ReqTransactionNormalPay) (res ResTransactionNormalPay, err error)
+	// GetTransactionList 결제 내역 조회
+	GetTransactionList(req ReqGetTransactionList) (res ResGetTransactionList, err error)
 }
 
 type ClientInfo struct {
@@ -361,4 +363,42 @@ type ResTransactionNormalPay struct {
 	Token     int64  `json:"token"`
 	Code      *int   `json:"code,omitempty"`
 	Message   string `json:"message,omitempty"`
+}
+
+type ReqGetTransactionList struct {
+	Date              string `json:"date"`
+	DateType          string `json:"date_type"`
+	PgCode            string `json:"pgcode"`
+	NaverAPIClientID  string `json:"naver_api_client_id"`
+	NaverAPISearchKey string `json:"naver_api_search_key"`
+}
+
+type reqGetTransactionList struct {
+	Date     string `json:"date"`
+	DateType string `json:"date_type"`
+	PgCode   string `json:"pgcode"`
+	ClientID string `json:"client_id"`
+}
+
+type ResGetTransactionList struct {
+	Code       *int          `json:"code,omitempty"`
+	Message    *string       `json:"message,omitempty"`
+	TotalCount int           `json:"total_count"`
+	List       []Transaction `json:"list"`
+}
+
+type Transaction struct {
+	PgCode          string `json:"pgcode"`
+	UserID          string `json:"user_id"`
+	UserName        string `json:"user_name"`
+	TID             string `json:"tid"`
+	CID             string `json:"cid"`
+	Amount          int    `json:"amount"`
+	TaxFreeAmount   int    `json:"taxfree_amount"`
+	TaxAmount       int    `json:"tax_amount"`
+	OrderNo         string `json:"order_no"`
+	ProductName     string `json:"product_name"`
+	StatusCode      int    `json:"status_code"`
+	TransactionDate string `json:"transaction_date"`
+	CancelDate      string `json:"cancel_date"`
 }
