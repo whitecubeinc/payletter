@@ -357,22 +357,22 @@ func (o *PayLetter) GetTransactionList(req ReqGetTransactionList) (res ResGetTra
 		err = errors.New("유효하지 않은 date type")
 	}
 
-	reqBody := reqGetTransactionList{
-		Date:     req.Date,
-		DateType: req.DateType,
-		PgCode:   req.PgCode,
-		ClientID: o.ClientID,
+	reqParam := map[string]string{
+		"date":      req.Date,
+		"date_type": req.DateType,
+		"pgcode":    req.PgCode,
+		"client_id": o.ClientID,
 	}
 
 	apiKey := o.SearchAPIKey
 	if PgCode.IsNaverCode(req.PgCode) { // 네이버페이는 client id 와 api key 가 다름
 		apiKey = req.NaverAPISearchKey
-		reqBody.ClientID = req.NaverAPIClientID
+		reqParam["client_id"] = req.NaverAPIClientID
 	}
 
-	res = utils.Post[ResGetTransactionList](
+	res = utils.Get[ResGetTransactionList](
 		getTransactionListUrl,
-		reqBody,
+		reqParam,
 		http.Header{
 			"Authorization": []string{fmt.Sprintf("PLKEY %s", apiKey)},
 			"Content-Type":  []string{"application/json"},
